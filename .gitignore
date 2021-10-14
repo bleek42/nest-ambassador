@@ -1,0 +1,4 @@
+.dbdata
+.vscode
+dist
+node_modules
