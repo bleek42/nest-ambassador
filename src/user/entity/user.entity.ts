@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
+import { Exclude } from 'class-transformer';
 
 @Entity('users')
 export class UserEntity extends BaseEntity {
@@ -21,6 +22,7 @@ export class UserEntity extends BaseEntity {
   email: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @Column({ default: true })
