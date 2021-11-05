@@ -1,3 +1,4 @@
+import { UpdateUserDto } from './dto/update-user.dto';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -21,7 +22,6 @@ export class UserService {
     user.username = username;
     user.email = email;
     user.password = password;
-    console.log(user);
     return await this.userRepository.save(user);
   }
 
@@ -31,5 +31,9 @@ export class UserService {
 
   public async findByUsername(username: string): Promise<UserEntity> {
     return this.userRepository.findOne({ username });
+  }
+
+  public async updateUser(id: number, updateUser: UpdateUserDto) {
+    return this.userRepository.update(id, updateUser);
   }
 }

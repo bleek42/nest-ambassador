@@ -1,12 +1,6 @@
 import { UserService } from './user.service';
 import { NewUserDto } from './dto/new-user.dto';
-import {
-  Body,
-  Controller,
-  Post,
-  BadRequestException,
-  HttpException,
-} from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 
 @Controller('user')
 export class UserController {

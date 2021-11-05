@@ -1,3 +1,4 @@
+import { AuthService } from './auth.service';
 import {
   BadRequestException,
   Body,
@@ -6,8 +7,10 @@ import {
   Get,
   NotFoundException,
   Post,
+  Put,
   Req,
   Res,
+  UnauthorizedException,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -15,20 +18,20 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
 
-import { AuthGuard } from './auth.guard';
+import { AuthGuard } from './guards/auth.guard';
 import { UserService } from './../user/user.service';
 import { UserEntity } from 'src/user/entity/user.entity';
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(
+    private readonly authService: AuthService,
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
   ) {}
 
   @Get('admin')
-  @UseGuards(AuthGuard)
-  public async getAuthUser(@Req() request: Request): Promise<UserEntity> {
+  public async validateUser(@Req() request: Request): Promise<UserEntity> {
     const cookie = request.cookies['jwt'];
     const { id } = await this.jwtService.verifyAsync(cookie);
     const user = await this.userService.findByUserId(id);
@@ -37,52 +40,48 @@ export class AuthController {
   }
 
   @Post('admin/login')
-  public async login(
+  public async adminLogin(
     @Body('username') username: string,
     @Body('password') password: string,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ message }> {
-    const user = await this.userService.findByUsername(username);
-
-    if (!user) {
-      throw new NotFoundException(`User with username ${username} not found!`);
-    }
-
-    const comparePasswords = await this.validateHashedPassword(
-      password,
-      user.password,
-    );
-
-    if (!comparePasswords) {
-      throw new BadRequestException('Incorrect password!');
-    }
-
-    const jwt = await this.jwtService.signAsync({
-      id: user.id,
-    });
+    const jwt = await this.authService.login(username, password);
 
     await response.cookie('jwt', jwt);
 
     return {
-      message: `User ${user.username} logged in!`,
+      message: 'User successfully logged in!',
     };
   }
 
   @Post('admin/logout')
-  public async logout(
+  public async adminLogout(
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ message }> {
     await response.clearCookie('jwt');
 
     return {
-      message: 'User logged out!',
+      message: 'User successfully logged out!',
     };
   }
 
-  private async validateHashedPassword(
-    inputPassword: string,
-    hashedPassword: string,
-  ): Promise<boolean> {
-    return bcrypt.compare(inputPassword, hashedPassword);
+  @Put('admin/profile')
+  public async updateAdminProfile(
+    @Req() request: Request,
+    @Body('username') username: string,
+    @Body('email') email: string,
+  ): Promise<UserEntity> {
+    const cookie = request.cookies['jwt'];
+    const { id, admin } = await this.jwtService.verifyAsync(cookie);
+    if (!admin) {
+      throw new UnauthorizedException('User does not have admin privleges!');
+    }
+
+    await this.userService.updateUser(id, {
+      username,
+      email,
+    });
+
+    return this.userService.findByUserId(id);
   }
 }
