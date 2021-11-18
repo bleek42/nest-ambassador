@@ -26,6 +26,9 @@ export class UserEntity extends BaseEntity {
   password: string;
 
   @Column({ default: true })
+  ambassador: boolean;
+
+  @Column({ default: false })
   admin: boolean;
 
   @Column()

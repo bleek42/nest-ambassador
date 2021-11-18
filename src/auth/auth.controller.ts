@@ -1,3 +1,4 @@
+import { UpdateUserDto } from './../user/dto/update-user.dto';
 import { AuthService } from './auth.service';
 import {
   BadRequestException,
@@ -68,19 +69,22 @@ export class AuthController {
   @Put('admin/profile')
   public async updateAdminProfile(
     @Req() request: Request,
-    @Body('username') username: string,
-    @Body('email') email: string,
+    @Body('user') userUpdate: UpdateUserDto,
+    @Body('confirmPassword') confirmPassword: string,
   ): Promise<UserEntity> {
     const cookie = request.cookies['jwt'];
     const { id, admin } = await this.jwtService.verifyAsync(cookie);
+    console.log(userUpdate);
     if (!admin) {
       throw new UnauthorizedException('User does not have admin privleges!');
     }
+    const { username, email, password } = userUpdate;
 
-    await this.userService.updateUser(id, {
-      username,
-      email,
-    });
+    if (password !== confirmPassword) {
+      throw new BadRequestException('Passwords do not match!');
+    }
+
+    await this.userService.updateUser(id, { username, email, password });
 
     return this.userService.findByUserId(id);
   }

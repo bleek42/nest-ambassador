@@ -36,4 +36,8 @@ export class UserService {
   public async updateUser(id: number, updateUser: UpdateUserDto) {
     return this.userRepository.update(id, updateUser);
   }
+
+  public async findAmbassadors() {
+    this.userRepository.find({ ambassador: true });
+  }
 }
