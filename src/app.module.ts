@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -8,18 +9,20 @@ import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'db',
-      port: 3306,
-      username: 'root',
-      password: 'rootpassword123',
-      database: 'ambassador',
-      autoLoadEntities: true,
-      synchronize: true,
+    ConfigModule.forRoot(),
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        type: 'mysql',
+        host: process.env.HOST,
+        port: parseInt(process.env.PORT) || 3306,
+        username: process.env.USERNAME,
+        password: process.env.PASSWORD,
+        database: process.env.DATABASE,
+        entities: [`${__dirname}/**/*/*.entity{ .ts, .js }`],
+        synchronize: true,
+      }),
+      imports: undefined,
     }),
-    UserModule,
-    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
