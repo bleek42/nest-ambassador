@@ -21,7 +21,7 @@ import { Request, Response } from 'express';
 
 import { AuthGuard } from './guards/auth.guard';
 import { UserService } from './../user/user.service';
-import { UserEntity } from 'src/user/entity/user.entity';
+import { UserEntity } from 'src/database/entity/user.entity';
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
@@ -31,6 +31,7 @@ export class AuthController {
     private readonly jwtService: JwtService,
   ) {}
 
+  @UseGuards(AuthGuard)
   @Get('admin')
   public async validateUser(@Req() request: Request): Promise<UserEntity> {
     const cookie = request.cookies['jwt'];
@@ -40,6 +41,7 @@ export class AuthController {
     return user;
   }
 
+  @UseGuards(AuthGuard)
   @Post('admin/login')
   public async adminLogin(
     @Body('username') username: string,
@@ -47,7 +49,6 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ message }> {
     const jwt = await this.authService.login(username, password);
-
     await response.cookie('jwt', jwt);
 
     return {
@@ -55,6 +56,7 @@ export class AuthController {
     };
   }
 
+  @UseGuards(AuthGuard)
   @Post('admin/logout')
   public async adminLogout(
     @Res({ passthrough: true }) response: Response,
@@ -66,6 +68,7 @@ export class AuthController {
     };
   }
 
+  @UseGuards(AuthGuard)
   @Put('admin/profile')
   public async updateAdminProfile(
     @Req() request: Request,
@@ -74,12 +77,11 @@ export class AuthController {
   ): Promise<UserEntity> {
     const cookie = request.cookies['jwt'];
     const { id, admin } = await this.jwtService.verifyAsync(cookie);
-    console.log(userUpdate);
     if (!admin) {
       throw new UnauthorizedException('User does not have admin privleges!');
     }
-    const { username, email, password } = userUpdate;
 
+    const { username, email, password } = userUpdate;
     if (password !== confirmPassword) {
       throw new BadRequestException('Passwords do not match!');
     }

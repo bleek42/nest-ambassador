@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-import { UserEntity } from 'src/user/entity/user.entity';
+import { UserEntity } from 'src/database/entity/user.entity';
 
 @Injectable()
 export class AuthService {
