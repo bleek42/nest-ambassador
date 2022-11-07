@@ -1,22 +1,21 @@
 import { Module } from '@nestjs/common';
-import { Controller } from './.controller';
 
-@(new Module({
+import { TypeOrmModule } from '@nestjs/typeorm';
+@Module({
   imports: [
-    ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
-        type: 'mysql',
+        type: 'postgres',
         host: process.env.HOST,
-        port: parseInt(process.env.PORT) || 3306,
+        port: parseInt(process.env.DB_PORT) || 5432,
         username: process.env.USERNAME,
         password: process.env.PASSWORD,
-        database: process.env.DATABASE,
+        database: process.env.DB_NAME,
         entities: [`${__dirname}/**/*/*.entity{ .ts, .js }`],
         synchronize: true,
       }),
       imports: undefined,
     }),
   ],
-}))
-export class Module {}
+})
+export class DatabaseModule {}

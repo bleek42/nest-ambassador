@@ -18,19 +18,17 @@ export class UserService {
     if (password !== confirmPassword) {
       throw new BadRequestException('Passwords do not match...');
     }
-    const user = new UserEntity();
-    user.username = username;
-    user.email = email;
-    user.password = password;
+    const user = new UserEntity({ username, email, password });
+
     return await this.userRepository.save(user);
   }
 
   public async findByUserId(id: number): Promise<UserEntity> {
-    return this.userRepository.findOne(id);
+    return this.userRepository.findOneBy({ id });
   }
 
   public async findByUsername(username: string): Promise<UserEntity> {
-    return this.userRepository.findOne({ username });
+    return this.userRepository.findOneBy({ username });
   }
 
   public async updateUser(id: number, updateUser: UpdateUserDto) {
@@ -38,6 +36,11 @@ export class UserService {
   }
 
   public async findAmbassadors() {
-    this.userRepository.find({ ambassador: true });
+    this.userRepository.findBy({ ambassador: true });
+  }
+
+  public async changeAmbassadorStatus(id: number): Promise<boolean> {
+    const userToChange = await this.userRepository.findByUserId(id);
+    if(!userToChange) console.error()
   }
 }
