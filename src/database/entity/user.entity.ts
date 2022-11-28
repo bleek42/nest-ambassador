@@ -16,8 +16,11 @@ export class UserEntity extends BaseEntity {
     Object.assign(this, dto);
   }
 
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('identity')
   id: number;
+
+  @PrimaryGeneratedColumn('uuid')
+  uid: number | string;
 
   @Column({ unique: true })
   username: string;

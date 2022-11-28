@@ -41,6 +41,9 @@ export class UserService {
 
   public async changeAmbassadorStatus(id: number): Promise<boolean> {
     const userToChange = await this.userRepository.findByUserId(id);
-    if(!userToChange) console.error()
+    if (!userToChange)
+      console.error(
+        'change user ambassador status operation failed: no changes have been made.',
+      );
   }
 }
