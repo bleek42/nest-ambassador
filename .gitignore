@@ -1,6 +1,10 @@
-.dbdata
-.vscode
-dist
-node_modules
-ormconfig.json
+## folders
+
+.dbdata/
+.vscode/
+dist/
+node_modules/
+
+## files
+
 .env
