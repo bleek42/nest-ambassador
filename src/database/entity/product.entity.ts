@@ -16,4 +16,30 @@ export class ProductEntity extends BaseEntity {
     super();
     Object.assign(this, dto);
   }
+
+  @PrimaryGeneratedColumn('identity')
+  id: number;
+
+  @PrimaryGeneratedColumn('uuid')
+  uuid: number | string;
+
+  @Column({ unique: true })
+  name: string;
+
+  @Column({ default: 'no description available...', nullable: true })
+  description: string | null;
+
+  @Column({ default: null, nullable: true })
+  category: string | null;
+
+  @Column({ nullable: false })
+  addedBy: string;
+
+  @Column({})
+  @CreateDateColumn({})
+  created: Date;
+
+  @Column({})
+  @UpdateDateColumn()
+  updated: Date;
 }

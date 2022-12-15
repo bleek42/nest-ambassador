@@ -20,7 +20,7 @@ export class UserEntity extends BaseEntity {
   id: number;
 
   @PrimaryGeneratedColumn('uuid')
-  uid: number | string;
+  uuid: number | string;
 
   @Column({ unique: true })
   username: string;
@@ -32,7 +32,7 @@ export class UserEntity extends BaseEntity {
   @Exclude()
   password: string;
 
-  @Column({ default: true })
+  @Column({ default: false })
   ambassador: boolean;
 
   @Column({ default: false })
