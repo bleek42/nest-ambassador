@@ -1,4 +1,10 @@
 {
   "singleQuote": true,
-  "trailingComma": "all"
+  "trailingComma": "all",
+  "bracketSpacing": true,
+  "editorconfig": true,
+  "endOfLine": "lf",
+  "printWidth": 90,
+  "semi": true,
+  "arrowParens": "always"
 }

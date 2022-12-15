@@ -7,13 +7,20 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import * as bcrypt from 'bcryptjs';
 import { Exclude } from 'class-transformer';
-
+import argon2, { Options } from '@node-rs/argon2';
 @Entity('users')
 export class UserEntity extends BaseEntity {
-  @PrimaryGeneratedColumn('uuid')
+  constructor(dto: Partial<UserEntity>) {
+    super();
+    Object.assign(this, dto);
+  }
+
+  @PrimaryGeneratedColumn('identity')
   id: number;
+
+  @PrimaryGeneratedColumn('uuid')
+  uuid: number | string;
 
   @Column({ unique: true })
   username: string;
@@ -25,7 +32,7 @@ export class UserEntity extends BaseEntity {
   @Exclude()
   password: string;
 
-  @Column({ default: true })
+  @Column({ default: false })
   ambassador: boolean;
 
   @Column({ default: false })
@@ -41,6 +48,10 @@ export class UserEntity extends BaseEntity {
 
   @BeforeInsert()
   async hashPassword(): Promise<void> {
-    this.password = await bcrypt.hash(this.password, 10);
+    const opts: Options = {
+      algorithm: 0,
+      version: 1,
+    };
+    this.password = await argon2.hash(this.password, opts);
   }
 }
