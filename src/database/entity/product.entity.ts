@@ -7,8 +7,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Exclude } from 'class-transformer';
-import argon2, { Options } from '@node-rs/argon2';
 
 @Entity('products')
 export class ProductEntity extends BaseEntity {
@@ -36,7 +34,7 @@ export class ProductEntity extends BaseEntity {
   addedBy: string;
 
   @Column({})
-  @CreateDateColumn({})
+  @CreateDateColumn({ default: new Date() })
   created: Date;
 
   @Column({})

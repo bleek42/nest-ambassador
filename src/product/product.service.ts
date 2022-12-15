@@ -21,7 +21,7 @@ export class ProductService {
   }
 
   public async createNewProduct(prod: Partial<ProductEntity>) {
-    const isExistingProd = await this.productRepository.findOneByOrFail({ id });
+    const isExistingProd = await this.productRepository.findOneOrFail()
   }
 
   public async updateOneProduct() {}

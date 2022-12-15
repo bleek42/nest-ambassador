@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
 import { ProductEntity } from 'src/database/entity/product.entity';
 
 import { ProductService } from './product.service';
 
-@Controller('product')
+@Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
@@ -17,8 +17,18 @@ export class ProductController {
     return await this.productService.findOneProductByid(id);
   }
 
-  @Post('products/create')
-  public async(@Body() prodBody: unknown) {
+  @Post('create')
+  public async postProduct(@Body() prodBody: unknown) {
+    return;
+  }
+
+  @Patch('products/:id')
+  public async updateProductById(@Body() prodBody: unknown) {
+    return;
+  }
+
+  @Delete('products/:id')
+  public async deleteProductById(@Body() prodBody: unknown) {
     return;
   }
 }
